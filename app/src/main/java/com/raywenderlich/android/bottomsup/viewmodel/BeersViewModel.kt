@@ -16,6 +16,7 @@ class BeersViewModel : ViewModel() {
     val pageData = MutableLiveData<Int>()
     val beerData = MutableLiveData<List<Beer>>()
     fun getBeers() {
+        interactor.getBeers(1, beersCallback())
         interactor.getBeers(pageData.value ?: 1, beersCallback())
     }
 
