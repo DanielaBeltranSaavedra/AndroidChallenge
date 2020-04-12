@@ -23,6 +23,7 @@
 package com.raywenderlich.android.bottomsup.ui.feed
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -46,8 +47,25 @@ class BeersActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_beers)
+    val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val networInfo= cm.activeNetworkInfo
+    if(networInfo != null && networInfo.isConnected){
 
-    initializeUi()
+        if(networInfo.type== ConnectivityManager.TYPE_WIFI){
+            Toast.makeText(baseContext, "Connected via WIFI Network", Toast.LENGTH_SHORT).show()
+
+        }
+        if(networInfo.type== ConnectivityManager.TYPE_MOBILE){
+            Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
+
+    }
+
+
+    }
+      else{
+        Toast.makeText(baseContext, "No Internet Connection",Toast.LENGTH_SHORT).show()
+    }
+      initializeUi()
 
     viewModel.errorData.subscribe(this, this::setErrorVisibility)
     viewModel.loadingData.subscribe(this, this::showLoading)
@@ -67,6 +85,24 @@ class BeersActivity : AppCompatActivity() {
 
   private fun showLoading(isLoading: Boolean) {
     pullToRefresh.isRefreshing = isLoading
+      val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+      val networInfo= cm.activeNetworkInfo
+      if(networInfo != null && networInfo.isConnected){
+
+          if(networInfo.type== ConnectivityManager.TYPE_WIFI){
+              Toast.makeText(baseContext, "Connected via WIFI Network", Toast.LENGTH_SHORT).show()
+
+          }
+          if(networInfo.type== ConnectivityManager.TYPE_MOBILE){
+              Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
+
+          }
+
+
+      }
+      else{
+          Toast.makeText(baseContext, "No Internet Connection",Toast.LENGTH_SHORT).show()
+      }
   }
 
   private fun setErrorVisibility(shouldShow: Boolean) {
