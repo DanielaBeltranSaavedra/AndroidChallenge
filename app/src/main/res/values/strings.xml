@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">BeerUpNow</string>
+    <string name="about_menu">About</string>
 </resources>

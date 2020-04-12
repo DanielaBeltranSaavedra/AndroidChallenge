@@ -22,11 +22,15 @@
 
 package com.raywenderlich.android.bottomsup.ui.feed
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.raywenderlich.android.bottomsup.R
 import com.raywenderlich.android.bottomsup.common.getViewModel
 import com.raywenderlich.android.bottomsup.common.subscribe
@@ -69,6 +73,27 @@ class BeersActivity : AppCompatActivity() {
     errorView.visibility = if (shouldShow) View.VISIBLE else View.GONE
     beersList.visibility = if (!shouldShow) View.VISIBLE else View.GONE
   }
+
+  override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+     super.onCreateOptionsMenu(menu)
+    menuInflater.inflate(R.menu.menu,menu)
+    return true
+  }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+       var selectedOption =""
+        when(item?.itemId){
+
+            R.id.favorites-> {
+
+            }
+            R.id.home-> selectedOption ="Home"
+        }
+        Toast.makeText(this,"Option : "+ selectedOption,Toast.LENGTH_SHORT).show()
+    return super.onOptionsItemSelected(item)
+    }
+
 
 
 }
