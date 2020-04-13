@@ -24,7 +24,9 @@ package com.raywenderlich.android.bottomsup.ui.feed
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.http.SslCertificate.restoreState
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
@@ -44,9 +46,13 @@ class BeersActivity : AppCompatActivity() {
   private val viewModel by lazy { getViewModel<BeersViewModel>() }
   private val adapter = BeersAdapter()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     setContentView(R.layout.activity_beers)
+        if(savedInstanceState!=null){
+            restoreState(savedInstanceState)
+        }
     val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networInfo= cm.activeNetworkInfo
     if(networInfo != null && networInfo.isConnected){
@@ -56,7 +62,7 @@ class BeersActivity : AppCompatActivity() {
 
         }
         if(networInfo.type== ConnectivityManager.TYPE_MOBILE){
-            Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
+          Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -71,15 +77,15 @@ class BeersActivity : AppCompatActivity() {
     viewModel.loadingData.subscribe(this, this::showLoading)
     viewModel.pageData.subscribe(this, adapter::clearIfNeeded)
     viewModel.beerData.subscribe(this, adapter::addItems)
+        viewModel.getBeers()
 
 
-    viewModel.getBeers() // request the data for the first time
   }
-
-  private fun initializeUi() {
+    private fun initializeUi() {
     beersList.layoutManager = GridLayoutManager(this, 2)
     beersList.itemAnimator = DefaultItemAnimator()
     beersList.adapter = adapter
+
     pullToRefresh.setOnRefreshListener(viewModel::onRefresh)
   }
 
@@ -122,7 +128,7 @@ class BeersActivity : AppCompatActivity() {
         when(item?.itemId){
 
             R.id.favorites-> {
-
+                setContentView(R.layout.favorites)
             }
             R.id.home-> selectedOption ="Home"
         }
