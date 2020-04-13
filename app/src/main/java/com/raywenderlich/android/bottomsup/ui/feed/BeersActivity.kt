@@ -23,10 +23,12 @@
 package com.raywenderlich.android.bottomsup.ui.feed
 
 import android.content.Context
+import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.net.http.SslCertificate.restoreState
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
@@ -48,11 +50,11 @@ class BeersActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     setContentView(R.layout.activity_beers)
         if(savedInstanceState!=null){
             restoreState(savedInstanceState)
         }
+
     val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networInfo= cm.activeNetworkInfo
     if(networInfo != null && networInfo.isConnected){
@@ -69,7 +71,15 @@ class BeersActivity : AppCompatActivity() {
 
     }
       else{
-        Toast.makeText(baseContext, "No Internet Connection",Toast.LENGTH_SHORT).show()
+        val builder= AlertDialog.Builder(this)
+        builder.setTitle("No Internet Connection")
+        builder.setMessage("Please check your internet connection")
+
+        builder.setNegativeButton("Cancel",{dialogInterface: DialogInterface, which: Int ->  })
+        builder.show()
+        Toast.makeText(baseContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
+
+
     }
       initializeUi()
 
@@ -107,7 +117,13 @@ class BeersActivity : AppCompatActivity() {
 
       }
       else{
-          Toast.makeText(baseContext, "No Internet Connection",Toast.LENGTH_SHORT).show()
+          val builder= AlertDialog.Builder(this)
+          builder.setTitle("No Internet Connection")
+          builder.setMessage("Please check your internet connection")
+
+          builder.setNegativeButton("Cancel",{dialogInterface: DialogInterface, which: Int ->  })
+          builder.show()
+          Toast.makeText(baseContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
       }
   }
 
@@ -129,12 +145,18 @@ class BeersActivity : AppCompatActivity() {
 
             R.id.favorites-> {
                 setContentView(R.layout.favorites)
+                selectedOption ="Favorites"
             }
-            R.id.home-> selectedOption ="Home"
+            R.id.home-> {
+                
+                selectedOption ="Home"
+            }
         }
         Toast.makeText(this,"Option : "+ selectedOption,Toast.LENGTH_SHORT).show()
     return super.onOptionsItemSelected(item)
     }
+
+
 
 
 
