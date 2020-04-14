@@ -6,7 +6,9 @@
   <item name="favorites" type="id" />
   <item name="pullToRefresh" type="id" />
   <item name="errorView" type="id" />
-
+  <item name="notification_badge" type="id" />
+  <item name="action_notification" type="id" />
+  <item name="badge_notification" type="id" />
   <item name="beerImage" type="id" />
   <item name="beerName" type="id" />
   <item name="beerStyle" type="id" />

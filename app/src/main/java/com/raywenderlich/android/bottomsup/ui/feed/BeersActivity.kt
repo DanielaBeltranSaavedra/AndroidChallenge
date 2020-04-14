@@ -41,6 +41,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import com.raywenderlich.android.bottomsup.R
 import com.raywenderlich.android.bottomsup.common.getViewModel
@@ -49,6 +50,7 @@ import com.raywenderlich.android.bottomsup.model.Beer
 import com.raywenderlich.android.bottomsup.ui.feed.adapter.BeersAdapter
 import com.raywenderlich.android.bottomsup.viewmodel.BeersViewModel
 import kotlinx.android.synthetic.main.activity_beers.*
+import kotlinx.android.synthetic.main.custom_notification_layour.*
 import kotlinx.android.synthetic.main.item_beer.*
 import kotlinx.android.synthetic.main.item_beer.view.*
 
@@ -164,13 +166,13 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner  
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
      super.onCreateOptionsMenu(menu)
     menuInflater.inflate(R.menu.menu,menu)
+
     return true
   }
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val viewModel2 by lazy { getViewModel<BeersViewModel>() }
-        val adapter2 = BeersAdapter(beersFav,this)
+
        var selectedOption =""
         when(item?.itemId){
 
@@ -189,18 +191,19 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner  
                 val recyclerView = findViewById(R.id.beersList) as RecyclerView
                 recyclerView.layoutManager=  GridLayoutManager(this, 2)
 
-                recyclerView.adapter=adapter2
+                recyclerView.adapter=adapter
 
                 beersList.layoutManager = GridLayoutManager(this, 2)
                 beersList.itemAnimator = DefaultItemAnimator()
-                beersList.adapter = adapter2
+                beersList.adapter = adapter
 
                 pullToRefresh.setOnRefreshListener(viewModel::onRefresh)
-                viewModel2.errorData.subscribe(this, this::setErrorVisibility)
-                viewModel2.loadingData.subscribe(this, this::showLoading)
-                viewModel2.pageData.subscribe(this, adapter2::clearIfNeeded)
-                viewModel2.beerData.subscribe(this, adapter2::addItems)
+                viewModel.errorData.subscribe(this, this::setErrorVisibility)
+                viewModel.loadingData.subscribe(this, this::showLoading)
+                viewModel.pageData.subscribe(this, adapter::clearIfNeeded)
+                viewModel.beerData.subscribe(this, adapter::addItems)
                 beersFav
+
                 selectedOption ="Home"
             }
         }
@@ -209,10 +212,31 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner  
     }
 
     override fun onItemClick(item: Beer, position: Int) {
-        beersFav.add(item)
+        if(!beersFav.contains(item)){
+            beersFav.add(item)
+        }
+        else{
+           beersFav.remove(item)
+        }
+
+        val num =beersFav.size
+        if(num >= 9){
+            notification_badge.text = "+9"
+            Toast.makeText(this, "Add to favorites "+item.name, Toast.LENGTH_SHORT).show()
+        }
+        if(num==0){
+            notification_badge.text = "0"
+            Toast.makeText(this, "Remove from favorites "+item.name, Toast.LENGTH_SHORT).show()
+        }
+        if(num>0 && num <9){ notification_badge.text = num.toString()
+            Toast.makeText(this, "Add to favorites "+item.name, Toast.LENGTH_SHORT).show()
+        }
 
 
-        Toast.makeText(this, "Add to favorites "+beersFav.get(0).name, Toast.LENGTH_SHORT).show()
+
+
+
+
 
     }
 
