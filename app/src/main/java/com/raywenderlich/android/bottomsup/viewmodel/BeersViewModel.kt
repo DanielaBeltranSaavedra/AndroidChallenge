@@ -15,6 +15,8 @@ class BeersViewModel : ViewModel() {
     val loadingData = MutableLiveData<Boolean>()
     val pageData = MutableLiveData<Int>()
     val beerData = MutableLiveData<List<Beer>>()
+
+
     fun getBeers() {
         interactor.getBeers(1, beersCallback())
         interactor.getBeers(pageData.value ?: 1, beersCallback())
@@ -43,6 +45,7 @@ class BeersViewModel : ViewModel() {
         private fun updateData(data: BeerResponse) {
             pageData.value = data.currentPage + 1 // increment the page
             beerData.value = data.beers
+
         }
 
 

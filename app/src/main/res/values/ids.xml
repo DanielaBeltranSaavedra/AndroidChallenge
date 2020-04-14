@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+  <item name="activityR" type="id" />
+  <item name="favBtn" type="id" />
   <item name="beersList" type="id" />
   <item name="favorites" type="id" />
   <item name="pullToRefresh" type="id" />

@@ -28,34 +28,51 @@ import android.net.ConnectivityManager
 import android.net.http.SslCertificate.restoreState
 import android.os.Bundle
 import android.os.PersistableBundle
+import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.Toast
 import com.raywenderlich.android.bottomsup.R
 import com.raywenderlich.android.bottomsup.common.getViewModel
 import com.raywenderlich.android.bottomsup.common.subscribe
+import com.raywenderlich.android.bottomsup.model.Beer
 import com.raywenderlich.android.bottomsup.ui.feed.adapter.BeersAdapter
 import com.raywenderlich.android.bottomsup.viewmodel.BeersViewModel
 import kotlinx.android.synthetic.main.activity_beers.*
+import kotlinx.android.synthetic.main.item_beer.*
+import kotlinx.android.synthetic.main.item_beer.view.*
 
 
-class BeersActivity : AppCompatActivity() {
+class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner  {
+
+
   private val viewModel by lazy { getViewModel<BeersViewModel>() }
-  private val adapter = BeersAdapter()
+    private val beersFav = ArrayList<Beer>()
+  private val adapter = BeersAdapter(beersFav,this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_beers)
+        val recyclerView = findViewById(R.id.beersList) as RecyclerView
+        recyclerView.layoutManager= LinearLayoutManager(this,LinearLayout.VERTICAL,false)
+        recyclerView.adapter=adapter
+
         if(savedInstanceState!=null){
             restoreState(savedInstanceState)
         }
 
-    val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networInfo= cm.activeNetworkInfo
     if(networInfo != null && networInfo.isConnected){
 
@@ -71,6 +88,11 @@ class BeersActivity : AppCompatActivity() {
 
     }
       else{
+        setContentView(R.layout.activity_beers)
+        val recyclerView = findViewById(R.id.beersList) as RecyclerView
+        recyclerView.layoutManager=  GridLayoutManager(this, 2)
+
+        recyclerView.adapter=adapter
         val builder= AlertDialog.Builder(this)
         builder.setTitle("No Internet Connection")
         builder.setMessage("Please check your internet connection")
@@ -81,12 +103,14 @@ class BeersActivity : AppCompatActivity() {
 
 
     }
+
       initializeUi()
 
     viewModel.errorData.subscribe(this, this::setErrorVisibility)
     viewModel.loadingData.subscribe(this, this::showLoading)
     viewModel.pageData.subscribe(this, adapter::clearIfNeeded)
     viewModel.beerData.subscribe(this, adapter::addItems)
+
         viewModel.getBeers()
 
 
@@ -100,7 +124,7 @@ class BeersActivity : AppCompatActivity() {
   }
 
   private fun showLoading(isLoading: Boolean) {
-    pullToRefresh.isRefreshing = isLoading
+      pullToRefresh.isRefreshing = isLoading
       val cm= baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
       val networInfo= cm.activeNetworkInfo
       if(networInfo != null && networInfo.isConnected){
@@ -117,6 +141,11 @@ class BeersActivity : AppCompatActivity() {
 
       }
       else{
+          setContentView(R.layout.activity_beers)
+          val recyclerView = findViewById(R.id.beersList) as RecyclerView
+          recyclerView.layoutManager=  GridLayoutManager(this, 2)
+
+          recyclerView.adapter=adapter
           val builder= AlertDialog.Builder(this)
           builder.setTitle("No Internet Connection")
           builder.setMessage("Please check your internet connection")
@@ -140,15 +169,38 @@ class BeersActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val viewModel2 by lazy { getViewModel<BeersViewModel>() }
+        val adapter2 = BeersAdapter(beersFav,this)
        var selectedOption =""
         when(item?.itemId){
 
             R.id.favorites-> {
-                setContentView(R.layout.favorites)
+
+
+
+
+
                 selectedOption ="Favorites"
             }
             R.id.home-> {
-                
+
+
+                setContentView(R.layout.activity_beers)
+                val recyclerView = findViewById(R.id.beersList) as RecyclerView
+                recyclerView.layoutManager=  GridLayoutManager(this, 2)
+
+                recyclerView.adapter=adapter2
+
+                beersList.layoutManager = GridLayoutManager(this, 2)
+                beersList.itemAnimator = DefaultItemAnimator()
+                beersList.adapter = adapter2
+
+                pullToRefresh.setOnRefreshListener(viewModel::onRefresh)
+                viewModel2.errorData.subscribe(this, this::setErrorVisibility)
+                viewModel2.loadingData.subscribe(this, this::showLoading)
+                viewModel2.pageData.subscribe(this, adapter2::clearIfNeeded)
+                viewModel2.beerData.subscribe(this, adapter2::addItems)
+                beersFav
                 selectedOption ="Home"
             }
         }
@@ -156,6 +208,13 @@ class BeersActivity : AppCompatActivity() {
     return super.onOptionsItemSelected(item)
     }
 
+    override fun onItemClick(item: Beer, position: Int) {
+        beersFav.add(item)
+
+
+        Toast.makeText(this, "Add to favorites "+beersFav.get(0).name, Toast.LENGTH_SHORT).show()
+
+    }
 
 
 

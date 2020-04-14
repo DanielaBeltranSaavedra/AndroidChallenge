@@ -26,12 +26,13 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.bottomsup.model.Beer
+import com.raywenderlich.android.bottomsup.ui.feed.adapter.BeersAdapter
 import kotlinx.android.synthetic.main.item_beer.view.*
 
 
 class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-  fun showBeer(beer: Beer): Unit = with(itemView) {
+  fun showBeer(beer: Beer, action:BeersAdapter.OnBeerItemClickListner): Unit = with(itemView) {
     beerStyle.text = beer.style.name
     beerName.text = beer.name
     val mediumImage = beer.labels.medium
@@ -42,5 +43,11 @@ class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     } else {
       mediumImage
     }).into(beerImage)
+    itemView.favBtn.setOnClickListener({action.onItemClick(beer, adapterPosition)})
+    itemView.setOnClickListener({
+      action.onItemClick(beer, adapterPosition)
+    })
   }
+
+
 }

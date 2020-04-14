@@ -63,4 +63,5 @@ dependencies {
   compile "com.squareup.retrofit2:retrofit:$retrofit"
   compile "com.squareup.retrofit2:converter-gson:$retrofit"
   compile 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+    implementation 'com.android.support:mediarouter-v7:27.0.2'
 }
