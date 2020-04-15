@@ -27,7 +27,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.raywenderlich.android.bottomsup.R
 import com.raywenderlich.android.bottomsup.model.Beer
-import com.raywenderlich.android.bottomsup.model.BeerResponse
 import com.raywenderlich.android.bottomsup.ui.feed.holder.BeerHolder
 
 
@@ -67,6 +66,10 @@ class BeersAdapter (var fav: ArrayList<Beer>,var clickListner: OnBeerItemClickLi
   }
 
   override fun getItemCount() = beers.size
+
+  fun getItems(): List<Beer> {
+    return beers
+  }
 
 
 }

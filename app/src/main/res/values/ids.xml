@@ -4,6 +4,8 @@
   <item name="favBtn" type="id" />
   <item name="beersList" type="id" />
   <item name="favorites" type="id" />
+  <item name="delete" type="id" />
+  <item name="favoritesList" type="id" />
   <item name="pullToRefresh" type="id" />
   <item name="errorView" type="id" />
   <item name="notification_badge" type="id" />
@@ -12,4 +14,5 @@
   <item name="beerImage" type="id" />
   <item name="beerName" type="id" />
   <item name="beerStyle" type="id" />
+  <item name="rojo" type="id" />
 </resources>

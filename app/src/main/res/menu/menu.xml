@@ -18,7 +18,13 @@
         android:id="@+id/favorites"
         android:actionLayout="@layout/favorites"
 
-        android:title="Favorites" />
+        android:title="Favorites" >
+        <menu >
+            <item
+                android:id="@+id/delete"
+                android:title="Delete all" />
+        </menu>
+    </item>
 
     <TextView
         android:id="@+id/badge_notification"

@@ -56,10 +56,10 @@
 
   <Button
       android:id="@+id/favBtn"
-      android:layout_width="30dp"
-      android:layout_height="30dp"
+      android:layout_width="16dp"
+      android:layout_height="29dp"
       android:layout_gravity="bottom|end"
-      android:background="@drawable/ic_favorite_red_24dp"
+      android:background="@drawable/ic_favorite_shadow_24dp"
       tools:layout_editor_absoluteX="16dp"
       tools:layout_editor_absoluteY="16dp" />
 
