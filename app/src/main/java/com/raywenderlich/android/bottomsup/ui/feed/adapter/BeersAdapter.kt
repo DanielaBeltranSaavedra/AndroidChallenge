@@ -30,7 +30,8 @@ import com.raywenderlich.android.bottomsup.model.Beer
 import com.raywenderlich.android.bottomsup.ui.feed.holder.BeerHolder
 
 
-class BeersAdapter (var fav: ArrayList<Beer>,var clickListner: OnBeerItemClickListner): RecyclerView.Adapter<BeerHolder>() {
+
+class BeersAdapter(var fav: ArrayList<Int>, var clickListner: OnBeerItemClickListner): RecyclerView.Adapter<BeerHolder>() {
   interface OnBeerItemClickListner{
     fun onItemClick(item:Beer,position: Int)
 
@@ -38,6 +39,7 @@ class BeersAdapter (var fav: ArrayList<Beer>,var clickListner: OnBeerItemClickLi
 
 
   private val beers = mutableListOf<Beer>()
+
 
 
   override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): BeerHolder {
@@ -49,7 +51,7 @@ class BeersAdapter (var fav: ArrayList<Beer>,var clickListner: OnBeerItemClickLi
   override fun onBindViewHolder(holder: BeerHolder?, position: Int) {
     val beer = beers[position]
 
-    holder?.run { showBeer(beer,clickListner) }
+    holder?.run { showBeer(beer,clickListner,fav) }
   }
 
   fun clearIfNeeded(page: Int) {

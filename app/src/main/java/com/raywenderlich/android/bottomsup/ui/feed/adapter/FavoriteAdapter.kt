@@ -38,7 +38,11 @@ class FavoriteAdapter (var fav: ArrayList<Beer>): RecyclerView.Adapter<FavoriteH
         })
         notifyDataSetChanged()
     }
+    fun removeItem(position: Int){
+        fav.removeAt(position)
+        notifyItemRemoved(position)
 
+    }
     override fun getItemCount() = fav.size
 
 

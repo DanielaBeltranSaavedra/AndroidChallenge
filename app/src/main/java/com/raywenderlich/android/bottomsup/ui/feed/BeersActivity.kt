@@ -27,20 +27,15 @@ import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.net.http.SslCertificate.restoreState
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.raywenderlich.android.bottomsup.R
@@ -61,8 +56,8 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
 
     private val viewModel by lazy { getViewModel<BeersViewModel>() }
     private val beersFav = ArrayList<Beer>()
-
-    private val adapter = BeersAdapter(beersFav, this)
+    private val beersLastFav= ArrayList<Int>()
+    private val adapter = BeersAdapter(beersLastFav, this)
 
     private val adapte2 = FavoriteAdapter(beersFav)
 
@@ -70,9 +65,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beers)
-        val recyclerView = findViewById(R.id.beersList) as RecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        recyclerView.adapter = adapter
+
 
 
         if (savedInstanceState != null) {
@@ -133,6 +126,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
         beersList.adapter = adapter
 
 
+
         pullToRefresh.setOnRefreshListener(viewModel::onRefresh)
 
     }
@@ -184,7 +178,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
         when (item?.itemId) {
             R.id.delete -> {
                 beersFav.removeAll(beersFav)
-
+                beersLastFav.removeAll(beersLastFav)
                 setContentView(R.layout.activity_beers)
 
                 val recyclerView = findViewById(R.id.beersList) as RecyclerView
@@ -215,6 +209,17 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
                 recyclerView.adapter = adapte2
 
                 selectedOption = "Favorites"
+                val itemTouchHelperCallback=object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
+                    override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
+                        return false
+
+                    }
+
+                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, position: Int) {
+                        adapte2.removeItem(position)
+                    }
+
+                }
             }
             R.id.home -> {
 
@@ -238,8 +243,10 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
 
         if (!beersFav.contains(item)) {
             beersFav.add(item)
+            beersLastFav.add(position)
         } else {
             beersFav.remove(item)
+            beersLastFav.remove(position)
         }
 
         val num = beersFav.size

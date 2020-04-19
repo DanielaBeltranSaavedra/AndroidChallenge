@@ -37,7 +37,7 @@ import kotlinx.android.synthetic.main.item_beer.view.*
 class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
   @SuppressLint("ResourceType")
-  fun showBeer(beer: Beer, action: BeersAdapter.OnBeerItemClickListner): Unit = with(itemView) {
+  fun showBeer(beer: Beer, action: BeersAdapter.OnBeerItemClickListner,beersLastFav:ArrayList<Int>): Unit = with(itemView) {
     beerStyle.text = beer.style.name
     beerName.text = beer.name
     val mediumImage = beer.labels.medium
@@ -48,7 +48,12 @@ class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     } else {
       mediumImage
     }).into(beerImage)
+
     var button_background : Int = 1;
+
+     if(beersLastFav.contains(adapterPosition)){
+       itemView.favBtn.setBackgroundResource(R.drawable.ic_favorite_red_24dp)
+     }
     itemView.favBtn.setOnClickListener({
       action.onItemClick(beer, adapterPosition)
       if(button_background==1){
@@ -73,6 +78,8 @@ class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
       })
     }
-  }
+
+
+}
 
 

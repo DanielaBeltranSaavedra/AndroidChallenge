@@ -44,8 +44,13 @@ class FavoriteHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
         } else {
             mediumImage
         }).into(beerImage)
-       
+
+
+
+
     }
+
+
 
 
 }
