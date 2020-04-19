@@ -41,5 +41,6 @@ class App : Application() {
 
     instance = this
     component.inject(this)
+
   }
 }

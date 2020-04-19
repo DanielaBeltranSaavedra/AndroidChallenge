@@ -8,7 +8,7 @@ import com.raywenderlich.android.bottomsup.model.Beer
 import com.raywenderlich.android.bottomsup.ui.feed.holder.FavoriteHolder
 
 
-class FavoriteAdapter (var fav: ArrayList<Beer>): RecyclerView.Adapter<FavoriteHolder>() {
+class FavoriteAdapter (var fav: ArrayList<Beer>,var lastfav: ArrayList<Int>, var num : Int): RecyclerView.Adapter<FavoriteHolder>() {
     interface OnFavItemClickListner{
         fun onItemClick(item: Beer, position: Int)
 
@@ -19,17 +19,26 @@ class FavoriteAdapter (var fav: ArrayList<Beer>): RecyclerView.Adapter<FavoriteH
 
         return FavoriteHolder(view)
     }
-
-     override fun onBindViewHolder(holder: FavoriteHolder?, position: Int) {
-        val beer = fav[position]
-
+    var position= 0
+     override fun onBindViewHolder(holder: FavoriteHolder?, pos: Int) {
+        val beer = fav[pos]
+         position=pos
         holder?.run { showFav(beer) }
     }
 
+
+    fun getPos(): Int {
+        return position
+    }
+    fun getItem():Beer{
+        val beer = fav[position]
+        return  beer
+    }
     fun clearIfNeeded(page: Int) {
         if (page == 1) {
             fav.clear()
         }
+
     }
 
     fun addItems(newBeers: List<Beer>) {
@@ -40,10 +49,13 @@ class FavoriteAdapter (var fav: ArrayList<Beer>): RecyclerView.Adapter<FavoriteH
     }
     fun removeItem(position: Int){
         fav.removeAt(position)
+        lastfav.remove(position)
         notifyItemRemoved(position)
+
 
     }
     override fun getItemCount() = fav.size
+
 
 
 

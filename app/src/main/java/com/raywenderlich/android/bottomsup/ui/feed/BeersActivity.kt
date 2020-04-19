@@ -58,105 +58,43 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
     private val beersFav = ArrayList<Beer>()
     private val beersLastFav= ArrayList<Int>()
     private val adapter = BeersAdapter(beersLastFav, this)
-
-    private val adapte2 = FavoriteAdapter(beersFav)
+    private val num = beersFav.size
+    private val adapte2 = FavoriteAdapter(beersFav,beersLastFav,num)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_beers)
-
-
-
         if (savedInstanceState != null) {
             restoreState(savedInstanceState)
         }
-
-
-        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networInfo = cm.activeNetworkInfo
-        if (networInfo != null && networInfo.isConnected) {
-
-            if (networInfo.type == ConnectivityManager.TYPE_WIFI) {
-                Toast.makeText(baseContext, "Connected via WIFI Network", Toast.LENGTH_SHORT).show()
-
-
-            }
-            if (networInfo.type == ConnectivityManager.TYPE_MOBILE) {
-                Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
-
-
-            }
-
-
-        } else {
-
-            setContentView(R.layout.activity_beers)
-            val recyclerView = findViewById(R.id.beersList) as RecyclerView
-            recyclerView.layoutManager = GridLayoutManager(this, 2)
-
-            recyclerView.adapter = adapter
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("No Internet Connection")
-            builder.setMessage("Please check your internet connection")
-
-            builder.setNegativeButton("Cancel", { dialogInterface: DialogInterface, which: Int -> })
-            builder.show()
-            Toast.makeText(baseContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
-
-
-        }
-
+        showConnection()
         initializeUi()
+        subscribe()
 
+
+
+    }
+    private  fun subscribe(){
         viewModel.errorData.subscribe(this, this::setErrorVisibility)
         viewModel.loadingData.subscribe(this, this::showLoading)
         viewModel.pageData.subscribe(this, adapter::clearIfNeeded)
         viewModel.beerData.subscribe(this, adapter::addItems)
-
-
         viewModel.getBeers()
 
-
     }
-
     private fun initializeUi() {
         beersList.layoutManager = GridLayoutManager(this, 2)
         beersList.itemAnimator = DefaultItemAnimator()
         beersList.adapter = adapter
-
-
-
         pullToRefresh.setOnRefreshListener(viewModel::onRefresh)
 
     }
 
     private fun showLoading(isLoading: Boolean) {
         pullToRefresh.isRefreshing = isLoading
-        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networInfo = cm.activeNetworkInfo
-        if (networInfo != null && networInfo.isConnected) {
+        showConnection()
 
-            if (networInfo.type == ConnectivityManager.TYPE_WIFI) {
-                Toast.makeText(baseContext, "Connected via WIFI Network", Toast.LENGTH_SHORT).show()
-
-            }
-            if (networInfo.type == ConnectivityManager.TYPE_MOBILE) {
-                Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
-
-            }
-
-
-        } else {
-
-            setContentView(R.layout.activity_beers)
-            val recyclerView = findViewById(R.id.beersList) as RecyclerView
-            recyclerView.layoutManager = GridLayoutManager(this, 2)
-
-            recyclerView.adapter = adapter
-
-
-        }
     }
 
     private fun setErrorVisibility(shouldShow: Boolean) {
@@ -167,7 +105,6 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu, menu)
-
         return true
     }
 
@@ -180,87 +117,94 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
                 beersFav.removeAll(beersFav)
                 beersLastFav.removeAll(beersLastFav)
                 setContentView(R.layout.activity_beers)
-
                 val recyclerView = findViewById(R.id.beersList) as RecyclerView
                 recyclerView.layoutManager = GridLayoutManager(this, 1)
                 recyclerView.adapter = adapte2
-                val num = beersFav.size
-                if (num >= 9) {
-                    notification_badge.text = "+9"
-
-                }
-                if (num == 0) {
-                    notification_badge.text = "0"
-
-                }
-                if (num > 0 && num < 9) {
-                    notification_badge.text = num.toString()
-
-                }
+                showIcon()
 
             }
             R.id.favorites -> {
-
-
-                setContentView(R.layout.activity_beers)
-
-                val recyclerView = findViewById(R.id.beersList) as RecyclerView
-                recyclerView.layoutManager = GridLayoutManager(this, 1)
-                recyclerView.adapter = adapte2
-
+                showFavoritePage()
                 selectedOption = "Favorites"
-                val itemTouchHelperCallback=object: ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT){
-                    override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
-                        return false
-
-                    }
-
-                    override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, position: Int) {
-                        adapte2.removeItem(position)
-                    }
-
-                }
             }
             R.id.home -> {
-
-
                 setContentView(R.layout.activity_beers)
                 val recyclerView = findViewById(R.id.beersList) as RecyclerView
                 recyclerView.layoutManager = GridLayoutManager(this, 2)
-
                 recyclerView.adapter = adapter
-
-
-
+                showIcon()
                 selectedOption = "Home"
+                showConnection()
             }
         }
         Toast.makeText(this, "Option : " + selectedOption, Toast.LENGTH_SHORT).show()
         return super.onOptionsItemSelected(item)
     }
+fun showFavoritePage(){
+    setContentView(R.layout.activity_beers)
+    val recyclerView = findViewById(R.id.beersList) as RecyclerView
+    recyclerView.layoutManager = GridLayoutManager(this, 1)
+    recyclerView.adapter = adapte2
 
+    var itemTouchHelper=ItemTouchHelper(SwipeToDelete(adapte2))
+    itemTouchHelper.attachToRecyclerView(recyclerView)
+    showIcon()
+}
     override fun onItemClick(item: Beer, position: Int) {
 
-        if (!beersFav.contains(item)) {
+        if (!beersFav.contains(item)&& !beersLastFav.contains(position) ) {
             beersFav.add(item)
+            Toast.makeText(this, "Add to favorites " + item.name, Toast.LENGTH_SHORT).show()
             beersLastFav.add(position)
+
         } else {
             beersFav.remove(item)
+            Toast.makeText(this, "Remove from favorites " + item.name, Toast.LENGTH_SHORT).show()
             beersLastFav.remove(position)
         }
+        showIcon()
 
+
+    }
+    fun showConnection(){
+        val cm = baseContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networInfo = cm.activeNetworkInfo
+        if (networInfo != null && networInfo.isConnected) {
+
+            if (networInfo.type == ConnectivityManager.TYPE_WIFI) {
+                Toast.makeText(baseContext, "Connected via WIFI Network", Toast.LENGTH_SHORT).show()
+
+            }
+            if (networInfo.type == ConnectivityManager.TYPE_MOBILE) {
+                Toast.makeText(baseContext, "Connected via MOBILE Network", Toast.LENGTH_SHORT).show()
+
+            }
+
+
+        } else {
+
+            setContentView(R.layout.activity_beers)
+            val recyclerView = findViewById(R.id.beersList) as RecyclerView
+            recyclerView.layoutManager = GridLayoutManager(this, 2)
+
+            recyclerView.adapter = adapter
+
+
+        }
+    }
+    fun showIcon(){
         val num = beersFav.size
         if (num >= 9) {
             notification_badge.text = "+9"
-            Toast.makeText(this, "Add to favorites " + item.name, Toast.LENGTH_SHORT).show()
+
         }
         if (num == 0) {
             notification_badge.text = "0"
-            Toast.makeText(this, "Remove from favorites " + item.name, Toast.LENGTH_SHORT).show()
+
         }
         if (num > 0 && num < 9) {
             notification_badge.text = num.toString()
-            Toast.makeText(this, "Add to favorites " + item.name, Toast.LENGTH_SHORT).show()
+
         }
     }
 

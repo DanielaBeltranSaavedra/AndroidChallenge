@@ -51,9 +51,14 @@ class BeerHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     var button_background : Int = 1;
 
-     if(beersLastFav.contains(adapterPosition)){
-       itemView.favBtn.setBackgroundResource(R.drawable.ic_favorite_red_24dp)
-     }
+      if(beersLastFav.contains(adapterPosition)){
+          itemView.favBtn.setBackgroundResource(R.drawable.ic_favorite_red_24dp)
+        button_background=2
+      }else{
+        itemView.favBtn.setBackgroundResource(R.drawable.ic_favorite_shadow_24dp)
+        button_background=1
+      }
+
     itemView.favBtn.setOnClickListener({
       action.onItemClick(beer, adapterPosition)
       if(button_background==1){
