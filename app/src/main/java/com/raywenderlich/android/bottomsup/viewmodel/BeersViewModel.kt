@@ -19,11 +19,11 @@ class BeersViewModel : ViewModel() {
 
     fun getBeers() {
         interactor.getBeers(1, beersCallback())
-        interactor.getBeers(pageData.value ?: 1, beersCallback())
+        interactor.getBeers(pageData.value ?:1, beersCallback())
     }
 
     fun onRefresh() {
-        pageData.value=1
+        pageData.value = 1
         getBeers()
     }
 

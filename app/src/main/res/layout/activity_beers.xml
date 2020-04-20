@@ -14,12 +14,30 @@
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
+      <ScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/beersList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="#009C27B0"
+                android:backgroundTint="@color/gradient_end" />
+        </LinearLayout>
+      </ScrollView>
   </android.support.v4.widget.SwipeRefreshLayout>
 
 

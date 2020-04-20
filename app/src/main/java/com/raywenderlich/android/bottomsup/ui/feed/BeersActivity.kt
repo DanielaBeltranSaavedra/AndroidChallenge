@@ -26,7 +26,9 @@ import android.content.Context
 import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.net.http.SslCertificate.restoreState
+import android.os.Build
 import android.os.Bundle
+import android.support.annotation.RequiresApi
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -60,7 +62,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
     private val adapter = BeersAdapter(beersLastFav, this)
     private val num = beersFav.size
     private val adapte2 = FavoriteAdapter(beersFav,beersLastFav,num)
-
+    private val isLoading=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,11 +72,24 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
         }
         showConnection()
         initializeUi()
+        progressBar.visibility =View.VISIBLE
         subscribe()
+        beersList.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                viewModel.getBeers()
+
+                super.onScrolled(recyclerView, dx, dy)
+            }
+
+
+
+        })
 
 
 
     }
+
     private  fun subscribe(){
         viewModel.errorData.subscribe(this, this::setErrorVisibility)
         viewModel.loadingData.subscribe(this, this::showLoading)
@@ -93,7 +108,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
 
     private fun showLoading(isLoading: Boolean) {
         pullToRefresh.isRefreshing = isLoading
-        showConnection()
+
 
     }
 
@@ -107,6 +122,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
         menuInflater.inflate(R.menu.menu, menu)
         return true
     }
+
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -124,7 +140,9 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
 
             }
             R.id.favorites -> {
+
                 showFavoritePage()
+
                 selectedOption = "Favorites"
             }
             R.id.home -> {
@@ -141,14 +159,16 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
         return super.onOptionsItemSelected(item)
     }
 fun showFavoritePage(){
+
     setContentView(R.layout.activity_beers)
     val recyclerView = findViewById(R.id.beersList) as RecyclerView
     recyclerView.layoutManager = GridLayoutManager(this, 1)
     recyclerView.adapter = adapte2
-
     var itemTouchHelper=ItemTouchHelper(SwipeToDelete(adapte2))
     itemTouchHelper.attachToRecyclerView(recyclerView)
+
     showIcon()
+
 }
     override fun onItemClick(item: Beer, position: Int) {
 
