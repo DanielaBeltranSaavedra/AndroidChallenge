@@ -62,7 +62,6 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
     private val adapter = BeersAdapter(beersLastFav, this)
     private val num = beersFav.size
     private val adapte2 = FavoriteAdapter(beersFav,beersLastFav,num)
-    private val isLoading=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -108,7 +107,7 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
 
     private fun showLoading(isLoading: Boolean) {
         pullToRefresh.isRefreshing = isLoading
-
+        showConnection()
 
     }
 
@@ -150,9 +149,10 @@ class BeersActivity : AppCompatActivity(), BeersAdapter.OnBeerItemClickListner {
                 val recyclerView = findViewById(R.id.beersList) as RecyclerView
                 recyclerView.layoutManager = GridLayoutManager(this, 2)
                 recyclerView.adapter = adapter
+                showConnection()
                 showIcon()
                 selectedOption = "Home"
-                showConnection()
+
             }
         }
         Toast.makeText(this, "Option : " + selectedOption, Toast.LENGTH_SHORT).show()
@@ -202,6 +202,13 @@ fun showFavoritePage(){
 
 
         } else {
+            val builder= AlertDialog.Builder(this)
+            builder.setTitle("No Internet Connection")
+            builder.setMessage("Please check your internet connection")
+
+            builder.setNegativeButton("Cancel",{dialogInterface: DialogInterface, which: Int ->  })
+            builder.show()
+            Toast.makeText(baseContext, "No Internet Connection", Toast.LENGTH_SHORT).show()
 
             setContentView(R.layout.activity_beers)
             val recyclerView = findViewById(R.id.beersList) as RecyclerView
